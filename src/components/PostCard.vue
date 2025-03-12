@@ -1,6 +1,10 @@
 <script setup>
-import { TrashIcon, HandThumbUpIcon as ThumbUpOutline} from "@heroicons/vue/24/outline";
+import { TrashIcon, HandThumbUpIcon as ThumbUpOutline } from "@heroicons/vue/24/outline";
 import { HandThumbUpIcon as ThumbUpSolid } from "@heroicons/vue/24/solid";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
 const props = defineProps({
   post: {
     type: Object,
@@ -11,11 +15,15 @@ const props = defineProps({
 const emit = defineEmits(["delete", "like"]);
 
 function deletePost() {
-  emit("delete", props.post.id); //envoie l'event delete avec la valeur props.post.id => les posts sont dans props, donc dans l'App.vue, donc il faut transmettre l'information
+  emit("delete", props.post.id); //envoie l'event delete avec la valeur props.post.id => les posts sont dans props, donc dans l'App.vue, donc il faut transmettre l'information. Emets l'info à l'élément parent
 }
 
 function likePost() {
-  emit("like", props.post.id); //envoie l'event delete avec la valeur props.post.id => les posts sont dans props, donc dans l'App.vue, donc il faut transmettre l'information
+  emit("like", props.post.id);
+}
+
+function goToUserProfile() {
+  router.push({ name: "user", params: { username: props.post.author.username } });
 }
 </script>
 
@@ -23,24 +31,30 @@ function likePost() {
   <article class="card">
     <header>
       <img
-        :src="post.author.avatarURL"
-        :alt="post.author.username"
+        :src="props.post.author.avatarUrl"
+        :alt="props.post.author.username"
         width="36"
         height="36"
         class="avatar"
       />
-      <a>{{ post.author.username }}</a>
+      <a @click="goToUserProfile" style="text-decoration: none; color: inherit">{{
+        props.post.author.username
+      }}</a>
     </header>
     <!--RENDU DECLARATIF-->
-    <p>{{ post.content }}</p>
+    <p>{{ props.post.content }}</p>
     <footer>
       <button @click="deletePost" class="btn-icon">
         <TrashIcon />
       </button>
 
       <button @click="likePost" class="btn-icon">
-        <ThumbUpOutline v-if="!post.liked"/>
-        <ThumbUpSolid v-else/>
+        <!--<ThumbUpOutline v-if="!post.liked"/>
+        <ThumbUpSolid v-else class="active"/>  -->
+
+        <component
+          :is="props.post.liked ? ThumbUpSolid : ThumbUpOutline"
+        /><!-- :class="{ active: post.liked }" -->
       </button>
     </footer>
   </article>
