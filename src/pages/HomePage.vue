@@ -9,6 +9,7 @@ const trimmedText = computed(() => text.value.trim()); // à chaque fois que "te
 //   text.value = event.target.value;
 // }
 
+
 const posts = ref([]);
 //const invertedPosts = computed(()=> posts.slice().sort((post2, post1) => post1.createdAt - post2.createdAt))
 const sortedRecentPosts = computed(() =>
